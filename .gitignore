@@ -1,0 +1,15 @@
+data
+models
+zenodo_raw_files
+.venv
+__pycache__
+*.pyc
+.DS_Store
+.ipynb_checkpoints
+logs
+.env
+.tmp.driveupload
+.tmp.drivedownload
+
+
+
