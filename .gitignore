@@ -10,6 +10,7 @@ logs
 .env
 .tmp.driveupload
 .tmp.drivedownload
+model
 
 
 

@@ -1,1 +1,12 @@
 pathlib 
+pip install -r requirements.txt
+numpy
+pandas
+requests
+flask
+scikit-learn
+matplotlib
+torch
+torchvision
+pip install torch torchvision
+pip install fastapi uvicorn python-multipart pillow torchvision torch
