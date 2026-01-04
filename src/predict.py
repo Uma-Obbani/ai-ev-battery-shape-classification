@@ -1,40 +1,56 @@
 import torch
-from torchvision import transforms
+from pathlib import Path
+import os
 from PIL import Image
-from .model import get_model
-from .dataset import train_dataset  # To get class names
 
-# Device
+from .model import get_model
+from .dataset import test_transforms, train_dataset, INPUT_TYPE
+from utils.logger import get_logger
+
+# -------------------------------------------------
+# Project root & logger
+# -------------------------------------------------
+PROJECT_ROOT = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "..")
+)
+
+logger = get_logger(
+    "testing",
+    os.path.join(PROJECT_ROOT, "training_logs", "test.log")
+)
+
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-# Load trained model
-num_classes = len(train_dataset.classes)
-model = get_model(num_classes=num_classes).to(device)
-model.load_state_dict(torch.load("model/best_model.pth", map_location=device))
-model.eval()
-
-# Transform for a single image
-transform = transforms.Compose([
-    transforms.Resize(256),
-    transforms.CenterCrop(224),
-    transforms.ToTensor(),
-    transforms.Normalize(mean=[0.485,0.456,0.406], std=[0.229,0.224,0.225])
-])
 
 def predict_image(image_path):
-    """Predict class of a single image"""
+    num_classes = len(train_dataset.classes)
+
+    model_path = Path(PROJECT_ROOT) / "model" / f"best_model_{INPUT_TYPE}.pth"
+
+    model = get_model(num_classes=num_classes).to(device)
+    model.load_state_dict(torch.load(model_path, map_location=device))
+    model.eval()
+
     image = Image.open(image_path).convert("RGB")
-    image = transform(image).unsqueeze(0).to(device)
-    
+    image = test_transforms(image).unsqueeze(0).to(device)
+
     with torch.no_grad():
         outputs = model(image)
-        _, pred_idx = torch.max(outputs, 1)
-    
-    class_name = train_dataset.classes[pred_idx.item()]
-    return class_name
+        probs = torch.softmax(outputs, dim=1)
+        conf, pred = torch.max(probs, 1)
 
-# Example usage
+    class_name = train_dataset.classes[pred.item()]
+
+    logger.info(
+        f"Image: {image_path} | "
+        f"Predicted: {class_name} | "
+        f"Confidence: {conf.item():.4f}"
+    )
+
+    print(f"Predicted class: {class_name}")
+    print(f"Confidence: {conf.item():.4f}")
+
+
 if __name__ == "__main__":
-    test_image_path = "/Users/umaobbani/Documents/DSR_ai-ev-battery-shape-classification_portfolio/ai-ev-battery-shape-classification/data/processed/test/images/prismatic/1_1_R_2_pri.jpg"
-    predicted_class = predict_image(test_image_path)
-    print(f"Predicted Class: {predicted_class}")
+    image_path = input("Enter image path: ")
+    predict_image(image_path)

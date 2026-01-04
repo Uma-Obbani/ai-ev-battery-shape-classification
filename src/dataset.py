@@ -2,6 +2,7 @@
 from torchvision import transforms
 from torchvision.datasets import ImageFolder
 from torch.utils.data import DataLoader
+import os
 
 # Transformations for ResNet
 train_transforms = transforms.Compose([
@@ -13,10 +14,20 @@ train_transforms = transforms.Compose([
 val_transforms = train_transforms
 test_transforms = train_transforms
 
+import os
+
+INPUT_TYPE = os.getenv("INPUT_TYPE", "images")
+
+
+
 # Dataset paths
-train_path = "/Users/umaobbani/Documents/DSR_ai-ev-battery-shape-classification_portfolio/ai-ev-battery-shape-classification/data/processed/train/images"
-val_path = "/Users/umaobbani/Documents/DSR_ai-ev-battery-shape-classification_portfolio/ai-ev-battery-shape-classification/data/processed/val/images"
-test_path = "/Users/umaobbani/Documents/DSR_ai-ev-battery-shape-classification_portfolio/ai-ev-battery-shape-classification/data/processed/test/images"
+#train_path = "/Users/umaobbani/Documents/DSR_ai-ev-battery-shape-classification_portfolio/ai-ev-battery-shape-classification/data/processed/train/images"
+#val_path = "/Users/umaobbani/Documents/DSR_ai-ev-battery-shape-classification_portfolio/ai-ev-battery-shape-classification/data/processed/val/images"
+#test_path = "/Users/umaobbani/Documents/DSR_ai-ev-battery-shape-classification_portfolio/ai-ev-battery-shape-classification/data/processed/test/images"
+
+train_path = f"data/processed/train/{INPUT_TYPE}"
+val_path = f"data/processed/val/{INPUT_TYPE}"
+test_path = f"data/processed/test/{INPUT_TYPE}"
 
 # Datasets
 train_dataset = ImageFolder(train_path, transform=train_transforms)
