@@ -68,8 +68,8 @@ ai-ev-battery-shape-classification/
 ├── streamlit_app.py    # Streamlit frontend
 ├── README.md
 └── requirements.txt
-
-📊** Dataset**
+**
+📊 Dataset**
 
 Input: RGB battery images
 
